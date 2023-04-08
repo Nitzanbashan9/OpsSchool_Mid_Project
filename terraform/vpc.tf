@@ -4,7 +4,7 @@ resource "aws_vpc" "main" {
   instance_tenancy = "default"
 
   tags = {
-    Name = "opsschool_vpc"
+    Name = "midproject_vpc"
   }
 }
 
@@ -16,7 +16,7 @@ resource "aws_subnet" "public_subnet" {
   cidr_block = var.public_cidr[count.index]
   availability_zone = var.az[count.index]
   tags = {
-    Name = "public_subnet-${count.index+1}"
+    Name = "public_subnet-${count.index}"
   }
 }
 
@@ -28,7 +28,7 @@ resource "aws_subnet" "private_subnet" {
   cidr_block = var.private_cidr[count.index]
   availability_zone = var.az[count.index] 
   tags = {
-    Name = "private_subnet-${count.index+1}"
+    Name = "private_subnet-${count.index}"
   }
 }
 
@@ -43,7 +43,12 @@ resource "aws_internet_gateway" "gw" {
 
 #NAT-GW
 
+resource "aws_eip" "nat_gw" {
+  vpc      = true
+}
+
 resource "aws_nat_gateway" "gw" {
+  allocation_id = aws_eip.nat_gw.id
   subnet_id     = aws_subnet.public_subnet[0].id
 
   tags = {
@@ -66,12 +71,12 @@ resource "aws_route_table" "public_routes" {
   }
 }
 
-resource "aws_route_table_association" "routes_to_public_subnet1" {
+resource "aws_route_table_association" "routes_to_public_subnet0" {
   subnet_id      = aws_subnet.public_subnet[0].id
   route_table_id = aws_route_table.public_routes.id
 }
 
-resource "aws_route_table_association" "routes_to_public_subnet2" {
+resource "aws_route_table_association" "routes_to_public_subnet1" {
   subnet_id      = aws_subnet.public_subnet[1].id
   route_table_id = aws_route_table.public_routes.id
 }
@@ -80,7 +85,7 @@ resource "aws_route_table" "private_routes" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "172.31.37.238"
+    cidr_block = "0.0.0.0/0"
     gateway_id = aws_nat_gateway.gw.id
   }
 
@@ -89,12 +94,12 @@ resource "aws_route_table" "private_routes" {
   }
 }
 
-resource "aws_route_table_association" "routes_to_private_subnet1" {
+resource "aws_route_table_association" "routes_to_private_subnet0" {
   subnet_id      = aws_subnet.private_subnet[0].id
   route_table_id = aws_route_table.private_routes.id
 }
 
-resource "aws_route_table_association" "routes_to_private_subnet2" {
+resource "aws_route_table_association" "routes_to_private_subnet1" {
   subnet_id      = aws_subnet.private_subnet[1].id
   route_table_id = aws_route_table.private_routes.id
 }
