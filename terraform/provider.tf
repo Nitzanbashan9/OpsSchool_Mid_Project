@@ -1,5 +1,5 @@
 
 provider "aws" {
-    profile = "opsschool-take2"
+    profile = "default"
     region = "us-east-1"
 }

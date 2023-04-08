@@ -1,9 +1,9 @@
 terraform { 
     backend "s3" {
-        bucket = "opschool-take2"
-        key = "opsschool-take2.tfstate"
+        bucket = "opsschool-midproject"
+        key = "opsschool-midproject.tfstate"
         region = "us-east-1"
         dynamodb_table = "tf_lock"
-        profile = "opsschool-take2"
+        profile = "default"
     }
 }
