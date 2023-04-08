@@ -1,3 +1,21 @@
+resource "aws_security_group" "jenkins-sg" {
+  name = "jenkins-sg"
+  description = "jenkins-sg"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 0
+    to_port = 65535
+    protocol = "tcp"
+    self = true
+    security_groups = [aws_security_group.jenkins_alb_sg.id]
+  }
+
+  tags = {
+    Environment = "mid project"
+  }
+}
+
 resource "aws_security_group" "jenkins_alb_sg" {
   name = "jenkins_alb_sg"
   description = "Allow Jenkins inbound traffic"
