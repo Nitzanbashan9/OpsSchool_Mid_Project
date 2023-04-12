@@ -28,11 +28,12 @@ resource "aws_instance" "Jenkins_Slave" {
   availability_zone = "us-east-1a"
   ami           = "ami-0672d44d0593d0357"
   instance_type = "t3.micro"
+  count = 3
   subnet_id   = aws_subnet.public_subnet[0].id
   security_groups = [aws_security_group.jenkins_alb_sg.id]
 
   tags = {
-    Name = "Jenkins_Slave"
+    Name = "Jenkins_Slave_${count.index}"
     Environment = "mid project"
   }
 }
