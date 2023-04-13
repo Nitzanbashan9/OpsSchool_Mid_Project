@@ -32,6 +32,16 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
+resource "aws_subnet" "eks_private_subnet" {
+  count = length(var.az)
+  vpc_id     = aws_vpc.main.id
+  cidr_block = var.eks_private_cidr[count.index]
+  availability_zone = var.az[count.index] 
+  tags = {
+    Name = "eks_private_subnet-${count.index}"
+  }
+}
+
 #Internet Gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id

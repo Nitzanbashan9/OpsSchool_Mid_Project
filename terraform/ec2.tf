@@ -9,8 +9,14 @@ resource "aws_instance" "Jenkins_Master" {
   availability_zone = "us-east-1a"
   ami           = "ami-0113ab34450e56f0a"
   instance_type = "t3.micro"
+  associate_public_ip_address = true
   subnet_id   = aws_subnet.public_subnet[0].id
-  security_groups = [aws_security_group.jenkins_alb_sg.id]
+  security_groups = [aws_security_group.jenkins-sg.id]
+  key_name = "jenkins_ec2_key"
+
+  lifecycle {
+   ignore_changes = all
+  }
 
   tags = {
     Name = "Jenkins_Master"
@@ -28,9 +34,14 @@ resource "aws_instance" "Jenkins_Slave" {
   availability_zone = "us-east-1a"
   ami           = "ami-0672d44d0593d0357"
   instance_type = "t3.micro"
-  count = 3
+  count = 2
   subnet_id   = aws_subnet.public_subnet[0].id
-  security_groups = [aws_security_group.jenkins_alb_sg.id]
+  security_groups = [aws_security_group.jenkins-sg.id]
+  key_name = "jenkins_ec2_key"
+
+  lifecycle {
+   ignore_changes = all
+  }
 
   tags = {
     Name = "Jenkins_Slave_${count.index}"

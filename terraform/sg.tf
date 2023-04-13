@@ -11,6 +11,14 @@ resource "aws_security_group" "jenkins-sg" {
     security_groups = [aws_security_group.jenkins_alb_sg.id]
   }
 
+  ingress {
+    from_port = 0
+    to_port = 65535
+    protocol = "tcp"
+    cidr_blocks = ["109.186.208.253/32"]
+  }
+
+
   tags = {
     Environment = "mid project"
   }
