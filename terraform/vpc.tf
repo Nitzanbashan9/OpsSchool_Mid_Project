@@ -2,7 +2,8 @@
 resource "aws_vpc" "main" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
-
+  enable_dns_hostnames = true
+  enable_dns_support   = true
   tags = {
     Name = "midproject_vpc"
   }
@@ -17,6 +18,8 @@ resource "aws_subnet" "public_subnet" {
   availability_zone = var.az[count.index]
   tags = {
     Name = "public_subnet-${count.index}"
+    "kubernetes.io/cluster/midproject" = "shared"
+    "kubernetes.io/role/elb"                      = "1"
   }
 }
 
@@ -39,6 +42,9 @@ resource "aws_subnet" "eks_private_subnet" {
   availability_zone = var.az[count.index] 
   tags = {
     Name = "eks_private_subnet-${count.index}"
+    "kubernetes.io/cluster/midproject" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
+
   }
 }
 
@@ -111,5 +117,15 @@ resource "aws_route_table_association" "routes_to_private_subnet0" {
 
 resource "aws_route_table_association" "routes_to_private_subnet1" {
   subnet_id      = aws_subnet.private_subnet[1].id
+  route_table_id = aws_route_table.private_routes.id
+}
+
+resource "aws_route_table_association" "routes_to_eks_private_subnet0" {
+  subnet_id      = aws_subnet.eks_private_subnet[1].id
+  route_table_id = aws_route_table.private_routes.id
+}
+
+resource "aws_route_table_association" "routes_to_eks_private_subnet1" {
+  subnet_id      = aws_subnet.eks_private_subnet[1].id
   route_table_id = aws_route_table.private_routes.id
 }
